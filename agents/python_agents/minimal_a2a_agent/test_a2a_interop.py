@@ -1,11 +1,18 @@
+"""
+Interoperability test script for A2A agent communication.
+
+Tests streaming and non-streaming message handling between Python and Elixir agents,
+including positive and negative test cases for message validation.
+"""
 import httpx
 import json
+from typing import Dict, Any
 
 ELIXIR_AGENT_URL = "http://localhost:4000/api/a2a"
 PYTHON_AGENT_URL = "http://localhost:5001/api/a2a"
 
 # Example task_request message (with streaming enabled)
-A2A_MSG = {
+A2A_MSG: Dict[str, Any] = {
     "type": "task_request",
     "sender": "pyagent1",
     "recipient": "agent1",
@@ -15,7 +22,14 @@ A2A_MSG = {
     }
 }
 
-def send_streaming_request(url: str, msg: dict):
+def send_streaming_request(url: str, msg: Dict[str, Any]) -> None:
+    """
+    Send a streaming A2A message request and print responses.
+
+    Args:
+        url: Target endpoint URL for the A2A message.
+        msg: A2A message dictionary to send.
+    """
     print(f"Sending streaming request to {url}...")
     with httpx.stream("POST", url, json=msg, timeout=10.0) as r:
         print(f"[status: {r.status_code}]")
@@ -23,13 +37,21 @@ def send_streaming_request(url: str, msg: dict):
             if line:
                 print(line)
 
-def send_normal_request(url: str, msg: dict):
+def send_normal_request(url: str, msg: Dict[str, Any]) -> None:
+    """
+    Send a non-streaming A2A message request and print response.
+
+    Args:
+        url: Target endpoint URL for the A2A message.
+        msg: A2A message dictionary to send.
+    """
     print(f"Sending normal request to {url}...")
     r = httpx.post(url, json=msg, timeout=10.0)
     print(f"[status: {r.status_code}]")
     try:
         print(json.dumps(r.json(), indent=2))
-    except Exception:
+    except (json.JSONDecodeError, ValueError) as e:
+        print(f"[warning] Failed to parse JSON response: {e}")
         print(r.text)
 
 if __name__ == "__main__":
