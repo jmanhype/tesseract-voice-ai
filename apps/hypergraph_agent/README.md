@@ -1,6 +1,15 @@
 # HypergraphAgent
 
-**TODO: Add description**
+Multi-agent protocol and behaviour specification for the hypergraph agent system. This library defines the core `HypergraphAgent` behaviour that all agents must implement, along with a reference `BasicAgent` implementation.
+
+## Overview
+
+HypergraphAgent provides:
+- A simple callback-based protocol for agent implementations
+- Type specifications for agent input/output
+- A reference `BasicAgent` implementation demonstrating the behaviour
+
+Agents implementing this behaviour can participate in multi-agent workflows orchestrated by the Engine.
 
 ## Installation
 
